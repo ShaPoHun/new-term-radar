@@ -38,7 +38,9 @@ permissions:
 
 jobs:
   radar:
-    if: vars.RADAR_ENABLED == 'true'
+    # A manual run is deliberate, so it goes even while the schedule is still off:
+    # only the cron waits for the repository variable RADAR_ENABLED == 'true'.
+    if: github.event_name == 'workflow_dispatch' || vars.RADAR_ENABLED == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
