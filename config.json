@@ -53,12 +53,57 @@
   ],
 
   "judge": {"model": "gpt-4.1-mini", "min_score": 0.5},
-  "breakout": {"window_days": 14, "min_stars": 300, "velocity_min": 200, "delta_min": 400},
-  "new_sites": {"queries": {"ai": "%ai%", "video": "%video%"}, "weekday": 0},
-  "revenue": {"weekday": 0, "pages_growth": 3, "pages_new": 3, "min_revenue_usd": 500, "category": "", "max_leads": 10},
-  "competition": {"max_rows": 8, "weak_dr": 30, "location_code": 2840},
-  "review": {"after_days": 14, "per_day": 5},
-  "usecases": {"per_day": 5, "model": "claude-sonnet-4-6", "benchmark": "gpts", "min_volume": 50, "min_daily": 300, "related": true, "related_geo": "US", "country_trends": true, "country_min_volume": 1000, "country_max": 8},
 
-  "gsc": {}
+  "breakout": {"window_days": 14, "min_stars": 300, "velocity_min": 200, "delta_min": 400},
+
+  "new_sites": {"queries": {"ai": "%ai%", "video": "%video%"}, "weekday": 0,
+                "window_days": 90, "min_etv": 1000, "min_keywords": 20, "words": 10},
+
+  "revenue": {"weekday": 0, "pages_growth": 3, "pages_new": 3, "min_revenue_usd": 500,
+              "category": "", "max_leads": 10},
+
+  "asks": {"weekday": 0, "time": "week", "min_score": 2, "model": "gpt-4.1-mini",
+           "min_volume": 50, "max_leads": 12, "max_age_days": 14},
+
+  "sellers": {"weekday": 0, "per_platform": 100, "visits": true, "rank_max": 350,
+              "max_visits": 300000, "pool": 60, "max_leads": 12, "model": "gpt-4.1-mini"},
+
+  "builders": {"weekday": 0, "per_platform": 100, "rank_max": 350, "pool": 40, "max_leads": 12},
+
+  "feeds": {"weekday": 0, "max_per_feed": 10, "hn_points": 30},
+
+  "money": {"weekday": 0, "portfolio_sites": 12, "max_dr": 60, "max_sisters": 30},
+
+  "tutorials": {"max_leads": 3, "videos": 3, "model": "gpt-4.1-mini"},
+
+  "pains": {"model": "gpt-4.1-mini", "extensions": 5, "review_pages": 2, "max_stars": 3,
+            "videos": 3, "apps": 3},
+
+  "review": {"after_days": 14, "per_day": 5},
+
+  "usecases": {"per_day": 5, "model": "claude-sonnet-4-6", "benchmark": "gpts", "min_volume": 50,
+               "min_daily": 300, "related": true, "related_geo": "US", "country_trends": true,
+               "country_min_volume": 1000, "country_max": 8},
+
+  "competition": {"max_rows": 8, "weak_dr": 30, "location_code": 2840, "page_age": true},
+
+  "word_age": {"enabled": true, "time_range": "past_5_years", "new_days": 180},
+
+  "markets": {"enabled": true, "codes": ["US", "DE", "FR", "JP"], "difficulty": true, "top_region": true},
+
+  "serp_shape": {"enabled": true, "location_code": 2840, "language_code": "en", "device": "desktop"},
+
+  "yours": {"enabled": true, "domains": ["largemi.com"], "days": 28},
+
+  "year_curve": {"enabled": true},
+
+  "dot_com": {"enabled": true, "max_rows": 8},
+
+  "ai_answers": {"enabled": false, "engines": ["chatgpt"], "max_rows": 6,
+                 "prompt": "What is the best tool to {job}?", "location_code": 2840, "language_code": "en"},
+
+  "sidelights": {"names": 5, "whois_names": 2, "whois_days": 30, "products": 8,
+                 "min_volume": 50, "location_code": 2840},
+
+  "gsc": {"site": "sc-domain:largemi.com", "token_file": "gsc_token.json"}
 }
