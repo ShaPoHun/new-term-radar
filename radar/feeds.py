@@ -153,7 +153,9 @@ TRENDING = {
     "douyin": ("get_tikhub_douyin_app_v3_fetch_hot_search_list", {}, lambda d: [w.get("word") for k in ("word_list", "trending_list")
                                                                                  for w in (d.get("data") or {}).get(k) or []]),
     "tiktok": ("get_tikhub_tiktok_web_fetch_trending_searchwords", {}, lambda d: [w.get("trendingSearchWord") for w in d.get("trending_search_words") or []]),
-    "tiktok_tags": ("post_tikhub_tiktok_ads_get_trends_hashtag_list", {"country_code": "US", "time_range": 7, "limit": 50},
+    # country_code is left out on purpose: the endpoint's own default is US, and the router's copy of the schema
+    # still refuses it ("unknown argument /country_code" since 2026-10-30) while AIsa's REST docs list it.
+    "tiktok_tags": ("post_tikhub_tiktok_ads_get_trends_hashtag_list", {"time_range": 7, "limit": 50},
                     lambda d: [w.get("hashtagName") for w in d.get("items") or []]),
     "reddit": ("get_tikhub_reddit_app_fetch_trending_searches", {"need_format": True},
                lambda d: [w.get("displayQuery") for w in d.get("trendingQueries") or []]),
@@ -161,8 +163,26 @@ TRENDING = {
 
 
 def trending(c: dict) -> tuple[list[dict], int]:
-    calls = [{"call_id": k, "tool": TRENDING[k][0], "arguments": TRENDING[k][1]} for k in c["trending"]]
-    data, cost = aisa.call(calls)
+    batch = [{"call_id": k, "tool": TRENDING[k][0], "arguments": TRENDING[k][1]} for k in c["trending"]]
+    try:
+        data, cost = aisa.call(batch)
+    except aisa.AisaError as exc:
+        # The router refuses the whole batch when one call's arguments no longer match its schema (a provider
+        # adding an argument leaves the router's copy behind: country_code on 2026-10-30). A refused batch is
+        # billed nothing, so the sources are asked one by one and the ones that still work are kept.
+        if "unknown argument" not in str(exc) and "invalid_arguments" not in str(exc):
+            raise
+        data, cost, errors = {}, 0, []
+        for one in batch:
+            try:
+                got, spent = aisa.call([one])
+            except aisa.AisaError as e:
+                errors.append(f"{one['call_id']}: {e}")
+                continue
+            data.update(got)
+            cost += spent
+        if not data:
+            raise aisa.AisaError("; ".join(errors)[:200])
     out = []
     for k in c["trending"]:
         words = TRENDING[k][2](((data.get(k) or {}).get("data")) or {})
